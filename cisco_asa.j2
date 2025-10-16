@@ -5,7 +5,7 @@
 ! Device: {{ obj.name }}
 ! Location: {{ obj.location.name if obj.location else "Unknown" }}
 ! Platform: {{ obj.platform.name if obj.platform else "Unknown" }}
-! Generated: {{ now() }}
+! Generated: {{ now.strftime('%Y-%m-%d %H:%M:%S') }}
 ! ============================================
 
 ! ===== BASIC CONFIGURATION =====
@@ -49,12 +49,12 @@ interface Management0/0
 {% for interface in obj.interfaces.all() %}
 {% if interface.enabled and interface.name != "Management0/0" %}
 interface {{ interface.name }}
- nameif {{ interface.cf.nameif | default(interface.name|lower|replace('/', '_')) }}
+ nameif {{ interface.custom_field_data.nameif | default(interface.name|lower|replace('/', '_')) }}
  {% if interface.description %}
  description {{ interface.description }}
  {% endif %}
  {% if interface.mode == 'access' %}
- security-level {{ interface.cf.security_level | default('0') }}
+ security-level {{ interface.custom_field_data.security_level | default('0') }}
  {% endif %}
  {% for ip_address in interface.ip_addresses.all() %}
  ip address {{ ip_address.address.ip }} {{ ip_address.address.netmask }}
@@ -114,3 +114,4 @@ banner motd * Location: {{ obj.location.name if obj.location else "Unknown" }}
 banner motd ***********************************************
 
 ! ===== END OF CONFIGURATION =====
+
